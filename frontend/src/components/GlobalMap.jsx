@@ -8,41 +8,43 @@ const GlobalMap = ({ data }) => {
   const navigate = useNavigate();
   const [tooltip, setTooltip] = useState({ visible: false, name: '', risk: '', x: 0, y: 0 });
 
-  // Build a map of countryName -> highest risk level
-  const countryRisks = React.useMemo(() => {
-    const risks = {};
-    if (!data || !Array.isArray(data)) return risks;
+  // Build a map of countryName -> data
+  const countryMetrics = React.useMemo(() => {
+    const metrics = {};
+    if (!data || !Array.isArray(data)) return metrics;
     data.forEach(item => {
-      const { countriesAffected, riskLevel } = item;
+      const { countriesAffected, riskLevel, sentimentScore } = item;
       if (countriesAffected && Array.isArray(countriesAffected)) {
         countriesAffected.forEach(country => {
-          const cur = risks[country];
-          if (riskLevel === 'High') risks[country] = 'High';
-          else if (riskLevel === 'Medium' && cur !== 'High') risks[country] = 'Medium';
-          else if (riskLevel === 'Low' && !cur) risks[country] = 'Low';
+          const cur = metrics[country];
+          if (!cur || riskLevel === 'High' || (riskLevel === 'Medium' && cur.risk !== 'High')) {
+            metrics[country] = { risk: riskLevel, sentiment: sentimentScore };
+          }
         });
       }
     });
-    return risks;
+    return metrics;
   }, [data]);
 
-  // Find the risk level for a geography, using substring matching as fallback
-  const getRisk = (geo) => {
+  const getMetric = (geo) => {
     const name = geo.properties.name;
-    if (countryRisks[name]) return countryRisks[name];
-    const match = Object.keys(countryRisks).find(c =>
+    if (countryMetrics[name]) return countryMetrics[name];
+    const match = Object.keys(countryMetrics).find(c =>
       name.toLowerCase().includes(c.toLowerCase()) ||
       c.toLowerCase().includes(name.toLowerCase())
     );
-    return match ? countryRisks[match] : null;
+    return match ? countryMetrics[match] : null;
   };
 
   const getFillColor = (geo) => {
-    const risk = getRisk(geo);
-    if (risk === 'High') return '#ef4444';
-    if (risk === 'Medium') return '#facc15';
-    if (risk === 'Low') return '#10b981';
-    return '#1e2a3a';
+    const metric = getMetric(geo);
+    if (!metric) return '#1e2a3a';
+    
+    // Gradient based on sentiment: -1 (Red) -> 0 (Yellow) -> 1 (Green)
+    const s = metric.sentiment;
+    if (s < -0.3) return '#ef4444'; // Red
+    if (s < 0.2) return '#facc15';  // Yellow
+    return '#10b981';               // Green
   };
 
   const riskBadgeColor = (risk) => {
@@ -53,11 +55,11 @@ const GlobalMap = ({ data }) => {
   };
 
   const handleMouseEnter = (geo, evt) => {
-    const risk = getRisk(geo);
+    const metric = getMetric(geo);
     setTooltip({
       visible: true,
       name: geo.properties.name,
-      risk: risk || null,
+      risk: metric ? metric.risk : null,
       x: evt.clientX,
       y: evt.clientY,
     });
@@ -72,13 +74,13 @@ const GlobalMap = ({ data }) => {
   };
 
   const handleClick = (geo) => {
-    const risk = getRisk(geo);
-    if (risk) {
+    const metric = getMetric(geo);
+    if (metric) {
       // Find the actual stored key name
       const name = geo.properties.name;
-      const matchedKey = countryRisks[name]
+      const matchedKey = countryMetrics[name]
         ? name
-        : Object.keys(countryRisks).find(c =>
+        : Object.keys(countryMetrics).find(c =>
             name.toLowerCase().includes(c.toLowerCase()) ||
             c.toLowerCase().includes(name.toLowerCase())
           );
@@ -103,7 +105,7 @@ const GlobalMap = ({ data }) => {
         <Geographies geography={geoUrl}>
           {({ geographies }) =>
             geographies.map((geo) => {
-              const risk = getRisk(geo);
+              const metric = getMetric(geo);
               return (
                 <Geography
                   key={geo.rsmKey}
@@ -114,9 +116,9 @@ const GlobalMap = ({ data }) => {
                   style={{
                     default: { outline: 'none' },
                     hover: {
-                      fill: risk ? 'rgba(255,255,255,0.3)' : '#253347',
+                      fill: metric ? 'rgba(255,255,255,0.3)' : '#253347',
                       outline: 'none',
-                      cursor: risk ? 'pointer' : 'default',
+                      cursor: metric ? 'pointer' : 'default',
                     },
                     pressed: { outline: 'none' },
                   }}
@@ -175,11 +177,11 @@ const GlobalMap = ({ data }) => {
       )}
 
       <div className="map-legend">
-        <span className="legend-item"><span className="dot high" /> High Risk</span>
-        <span className="legend-item"><span className="dot medium" /> Medium Risk</span>
-        <span className="legend-item"><span className="dot low" /> Low Risk</span>
+        <span className="legend-item"><span className="dot high" /> Negative Sentiment</span>
+        <span className="legend-item"><span className="dot medium" /> Neutral / Tense</span>
+        <span className="legend-item"><span className="dot low" /> Stable / Positive</span>
         <span className="legend-item" style={{ color: '#64748b', fontSize: '0.75rem', marginLeft: '1rem' }}>
-          💡 Click highlighted countries to explore
+          💡 Global Sentiment Intelligence Heatmap
         </span>
       </div>
     </div>

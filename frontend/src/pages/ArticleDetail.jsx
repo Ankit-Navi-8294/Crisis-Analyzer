@@ -205,6 +205,42 @@ const ArticleDetail = () => {
           </div>
         </div>
 
+        {/* ─── Media Intelligence ────────────────────────────────────────── */}
+        <div className="cd-charts-row" style={{ marginTop: '2.5rem' }}>
+          <div className="cd-chart-card" style={{ flex: '1' }}>
+            <h3 className="cd-chart-title">Global Sentiment Score</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '150px' }}>
+              <div style={{ fontSize: '3rem', fontWeight: 'bold', color: article.sentimentScore < 0 ? '#ef4444' : '#10b981' }}>
+                {(article.sentimentScore * 100).toFixed(0)}%
+              </div>
+              <div style={{ fontSize: '0.9rem', color: '#94a3b8', marginTop: '0.5rem' }}>
+                {article.sentimentScore < -0.5 ? '⚠️ High Crisis Tension' : (article.sentimentScore < 0 ? '📉 Negative Sentiment' : '📈 Stable/Positive')}
+              </div>
+              <div style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', marginTop: '1.5rem', overflow: 'hidden' }}>
+                <div style={{ 
+                  width: `${((article.sentimentScore + 1) / 2) * 100}%`, 
+                  height: '100%', 
+                  background: `linear-gradient(90deg, #ef4444 0%, #facc15 50%, #10b981 100%)`,
+                  transition: 'width 1s ease-out'
+                }} />
+              </div>
+            </div>
+          </div>
+
+          <div className="cd-chart-card" style={{ flex: '1' }}>
+            <h3 className="cd-chart-title">Media Bias Narrative</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <span className="hero-label" style={{ margin: 0, background: 'rgba(59, 130, 246, 0.1)', color: '#60a5fa' }}>Primary Narrative:</span>
+                <span style={{ color: '#f8fafc', fontWeight: '600' }}>{article.mediaBias || 'Neutral Analysis'}</span>
+              </div>
+              <p style={{ fontSize: '0.9rem', color: '#94a3b8', lineHeight: '1.5' }}>
+                The AI detected a <strong>{article.mediaBias}</strong> bias in this report. This narrative typically prioritizes specific geopolitical objectives over neutral economic reporting.
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* ─── Chatbot Section ────────────────────────────────────────── */}
         <section className="chat-section">
           <div className="chat-header">

@@ -140,6 +140,9 @@ public class AnalysisService {
         a.setRiskLevel(lower.contains("war") || lower.contains("nuclear") || lower.contains("attack") || lower.contains("conflict") || lower.contains("collapse") || lower.contains("invasion") || lower.contains("missile") ? "High" : 
                        (lower.contains("sanction") || lower.contains("tariff") || lower.contains("tension") || lower.contains("crisis") || lower.contains("inflation") || lower.contains("military") || lower.contains("standoff") ? "Medium" : "Low"));
 
+        a.setSentimentScore("High".equals(a.getRiskLevel()) ? -0.8 : ("Medium".equals(a.getRiskLevel()) ? -0.4 : 0.1));
+        a.setMediaBias("General Intelligence / Fallback");
+
         return a;
     }
 

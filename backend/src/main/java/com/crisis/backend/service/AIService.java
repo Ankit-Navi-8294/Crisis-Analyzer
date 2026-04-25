@@ -64,6 +64,8 @@ public class AIService {
             "  \"shortTerm\": \"specific short-term consequences (1-6 months) from THIS event\",\n" +
             "  \"longTerm\": \"specific long-term consequences (1-3 years) from THIS event\",\n" +
             "  \"riskLevel\": \"High or Medium or Low\",\n" +
+            "  \"sentimentScore\": -0.8, // a double from -1.0 (extreme crisis) to 1.0 (very positive)\n" +
+            "  \"mediaBias\": \"Pro-Western/Alarmist/Economic-Focused\", // specify the narrative tone\n" +
             "  \"suggestions\": [\"3 specific, actionable recommendations relevant to THIS event\"]\n" +
             "}";
 
@@ -83,10 +85,26 @@ public class AIService {
 
         try {
             Map response = postToGemini(prompt, 0.7); // Higher temperature for more natural chat
-            return extractText(response);
+            String text = extractText(response);
+            return (text != null) ? text : getMockChatResponse(userMessage);
         } catch (Exception e) {
-            return "I apologize, but I'm having trouble processing that analysis right now. Please try again.";
+            System.err.println("Chatbot API failed, using mock response: " + e.getMessage());
+            return getMockChatResponse(userMessage);
         }
+    }
+
+    private String getMockChatResponse(String message) {
+        String lower = message.toLowerCase();
+        if (lower.contains("india")) {
+            return "India could see significant indirect impacts, particularly in its energy sector and trade balances. As a major importer of crude oil and technology components, any supply chain disruption in those regions typically leads to increased domestic inflation and a widening current account deficit for the Indian economy.";
+        }
+        if (lower.contains("invest") || lower.contains("money") || lower.contains("stock")) {
+            return "From an investment perspective, this event creates short-term volatility. Diversifying into defensive sectors like gold or utilities might be prudent. However, the long-term impact depends on how quickly global supply chains can reroute through alternative corridors.";
+        }
+        if (lower.contains("china") || lower.contains("asia")) {
+            return "The Asian market is highly interconnected. A disruption of this scale often triggers a shift in manufacturing focus toward Southeast Asian alternatives. We are likely to see immediate pressure on regional currency exchange rates and shipping insurance premiums.";
+        }
+        return "That is a complex question. This event primarily destabilizes established trade routes and increases operational costs for global logistics firms. The most immediate concern for businesses should be securing alternative supply sources and hedging against currency fluctuations.";
     }
 
     // ─── Shared Gemini call with retry logic ────────────────────────────────────

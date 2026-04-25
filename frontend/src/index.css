@@ -1,5 +1,76 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
 
+/* ─── LIVE INTELLIGENCE TICKER ─── */
+.ticker-bar {
+  background: rgba(15, 23, 42, 0.9);
+  border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+  padding: 0.5rem 2rem;
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+}
+
+.ticker-label {
+  background: #3b82f6;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  margin-right: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05rem;
+}
+
+.ticker-track {
+  display: inline-block;
+  animation: ticker 30s linear infinite;
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
+@keyframes ticker {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+/* ─── DASHBOARD ENHANCEMENTS ─── */
+.search-container {
+  max-width: 600px;
+  margin: 1.5rem auto 0;
+  position: relative;
+  animation: fadeIn 0.6s ease-out both;
+}
+
+.search-input {
+  width: 100%;
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 0.8rem 1.2rem 0.8rem 3rem;
+  color: white;
+  outline: none;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.search-input:focus {
+  border-color: #3b82f6;
+  background: rgba(30, 41, 59, 0.8);
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+}
+
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #64748b;
+}
+
 :root {
   --bg-color: #0a0e1a;
   --bg-gradient: linear-gradient(135deg, #0a0e1a 0%, #0d1321 50%, #0a0f1e 100%);

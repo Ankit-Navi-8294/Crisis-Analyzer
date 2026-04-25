@@ -14,6 +14,7 @@ function Dashboard() {
   const { data, setData, lastUpdated, setLastUpdated } = useData();
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(null);
+  const [search, setSearch] = React.useState('');
   const contentRef = useRef(null);
 
   const handlePrint = useReactToPrint({
@@ -42,8 +43,26 @@ function Dashboard() {
   const lowCount    = Array.isArray(data) ? data.filter(d => d.riskLevel === 'Low').length : 0;
   const hasData     = Array.isArray(data) && data.length > 0;
 
+  const filteredData = React.useMemo(() => {
+    if (!data) return [];
+    return data.filter(item => 
+      item.title.toLowerCase().includes(search.toLowerCase()) || 
+      item.description.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [data, search]);
+
   return (
     <div className="app-container">
+      {/* ─── Live Intelligence Ticker ─── */}
+      <div className="ticker-bar">
+        <span className="ticker-label">Live Monitor</span>
+        <div className="ticker-track">
+          {hasData 
+            ? data.map(d => `[${d.riskLevel} RISK] ${d.title}`).join(' • ') 
+            : 'Satellite Intelligence Link: Standing by for global risk telemetry... System Status: Operational'}
+        </div>
+      </div>
+
       <Header lastUpdated={lastUpdated} onRefresh={handleAnalyze} loading={loading} />
 
       <main className="main-content" ref={contentRef}>
@@ -66,21 +85,39 @@ function Dashboard() {
           <p className="hero-sub">
             Real-time geopolitical intelligence powered by AI — identify economic threats before they impact your organization.
           </p>
-          <button onClick={handleAnalyze} disabled={loading} className="analyze-button">
-            {loading ? (
-              <>
-                <div className="spinner" style={{ width: 20, height: 20, borderWidth: 2 }} />
-                Analyzing...
-              </>
-            ) : (
-              <>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', gap: '2rem' }}>
+            <button onClick={handleAnalyze} disabled={loading} className="analyze-button">
+              {loading ? (
+                <>
+                  <div className="spinner" style={{ width: 20, height: 20, borderWidth: 2 }} />
+                  Analyzing...
+                </>
+              ) : (
+                <>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                  </svg>
+                  Analyze Global Risks
+                </>
+              )}
+            </button>
+
+            {hasData && !loading && (
+              <div className="search-container" style={{ width: '100%' }}>
+                <svg className="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
                 </svg>
-                Analyze Global Risks
-              </>
+                <input 
+                  type="text" 
+                  className="search-input" 
+                  placeholder="Filter crises by country, event, or impact..." 
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </div>
             )}
-          </button>
+          </div>
         </section>
 
         <section className="results-section">
@@ -121,10 +158,16 @@ function Dashboard() {
               <GlobalMap data={data} />
 
               <div className="results-grid">
-                {data.map((item, index) => (
+                {filteredData.map((item, index) => (
                   <ResultCard key={index} data={item} index={index} />
                 ))}
               </div>
+
+              {filteredData.length === 0 && search && (
+                <div style={{ textAlign: 'center', padding: '3rem', color: '#64748b' }}>
+                  <p>No matches found for "{search}"</p>
+                </div>
+              )}
             </>
           )}
 

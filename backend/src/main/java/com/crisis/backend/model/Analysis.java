@@ -18,6 +18,8 @@ public class Analysis {
     private String longTerm;
     private String riskLevel;
     private List<String> suggestions;
+    private double sentimentScore; // -1.0 to 1.0
+    private String mediaBias; // e.g., "Pro-Western", "Economic-Focused", etc.
     private LocalDateTime createdAt;
 
     public Analysis() {
@@ -88,6 +90,22 @@ public class Analysis {
 
     public void setSuggestions(List<String> suggestions) {
         this.suggestions = suggestions;
+    }
+
+    public double getSentimentScore() {
+        return sentimentScore;
+    }
+
+    public void setSentimentScore(double sentimentScore) {
+        this.sentimentScore = sentimentScore;
+    }
+
+    public String getMediaBias() {
+        return mediaBias;
+    }
+
+    public void setMediaBias(String mediaBias) {
+        this.mediaBias = mediaBias;
     }
 
     public LocalDateTime getCreatedAt() {

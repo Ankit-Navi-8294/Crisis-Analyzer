@@ -83,24 +83,29 @@ public class NewsService {
     private List<Map<String, String>> getMockNews() {
         List<Map<String, String>> mock = new ArrayList<>();
         mock.add(Map.of(
-            "title", "Sudden Military Escalation in Eastern Europe Disrupts Global Wheat Supply",
-            "description", "New hostilities near key export ports have halted grain shipments, sending global wheat futures to record highs.",
-            "content", "As military maneuvers intensify, major shipping lanes have been declared high-risk zones. Economists warn of a looming food security crisis in developing nations."
+            "title", "Sudden Military Escalation in Ukraine and Russia Disrupts Global Wheat Supply",
+            "description", "New hostilities near key Black Sea export ports have halted grain shipments, sending global wheat futures to record highs.",
+            "content", "As military maneuvers intensify, major shipping lanes in the Black Sea have been declared high-risk zones. Economists warn of a looming food security crisis in developing nations."
         ));
         mock.add(Map.of(
-            "title", "Massive Cyber Attack Targets Global Banking SWIFT Network",
-            "description", "A coordinated ransomware attack has paralyzed international transaction systems for several major financial institutions.",
+            "title", "Massive Cyber Attack Targets United States Banking SWIFT Network",
+            "description", "A coordinated ransomware attack has paralyzed international transaction systems for several major financial institutions in the USA.",
             "content", "The breach has caused widespread panic in currency markets. Experts suggest the attack originated from a state-sponsored actor, aiming to destabilize the global financial order."
         ));
         mock.add(Map.of(
             "title", "Unprecedented Drought in Panama Canal Forces 50% Reduction in Cargo Traffic",
-            "description", "Extreme climate conditions have lowered water levels to historic lows, creating a massive bottleneck in global trade.",
+            "description", "Extreme climate conditions in Panama have lowered water levels to historic lows, creating a massive bottleneck in global trade.",
             "content", "Ships are currently waiting up to 20 days to transit, causing a ripple effect across retail supply chains in the United States and Europe just ahead of peak season."
         ));
         mock.add(Map.of(
             "title", "Taiwan Semiconductor Hub Hit by Catastrophic Typhoon Damage",
-            "description", "A Category 5 typhoon has caused severe flooding in Hsinchu Science Park, the world's most critical chip manufacturing center.",
-            "content", "While early assessments are ongoing, the disruption to high-end AI chip production is expected to last for at least one fiscal quarter, impacting tech giants globally."
+            "description", "A Category 5 typhoon has caused severe flooding in Hsinchu Science Park, Taiwan, the world's most critical chip manufacturing center.",
+            "content", "While early assessments are ongoing, the disruption to high-end AI chip production in Taiwan is expected to last for at least one fiscal quarter, impacting tech giants globally."
+        ));
+        mock.add(Map.of(
+            "title", "Germany Announces Critical Energy Shortage Amid Pipeline Failure",
+            "description", "A major technical failure in the North Sea pipeline has forced Germany to declare a state of emergency for its industrial sector.",
+            "content", "Gas prices have surged 40% across Europe. The German government is considering mandatory energy rationing to preserve strategic reserves for the winter."
         ));
         return mock;
     }
