@@ -69,10 +69,39 @@ public class NewsService {
                     newsItems.add(item);
                 }
             }
+            if (newsItems.isEmpty()) {
+                System.out.println("No news fetched from API, using mock crisis data for demo.");
+                return getMockNews();
+            }
             return newsItems;
         } catch (Exception e) {
             System.err.println("Failed to fetch news from NewsAPI: " + e.getMessage());
-            return new ArrayList<>();
+            return getMockNews();
         }
+    }
+
+    private List<Map<String, String>> getMockNews() {
+        List<Map<String, String>> mock = new ArrayList<>();
+        mock.add(Map.of(
+            "title", "Sudden Military Escalation in Eastern Europe Disrupts Global Wheat Supply",
+            "description", "New hostilities near key export ports have halted grain shipments, sending global wheat futures to record highs.",
+            "content", "As military maneuvers intensify, major shipping lanes have been declared high-risk zones. Economists warn of a looming food security crisis in developing nations."
+        ));
+        mock.add(Map.of(
+            "title", "Massive Cyber Attack Targets Global Banking SWIFT Network",
+            "description", "A coordinated ransomware attack has paralyzed international transaction systems for several major financial institutions.",
+            "content", "The breach has caused widespread panic in currency markets. Experts suggest the attack originated from a state-sponsored actor, aiming to destabilize the global financial order."
+        ));
+        mock.add(Map.of(
+            "title", "Unprecedented Drought in Panama Canal Forces 50% Reduction in Cargo Traffic",
+            "description", "Extreme climate conditions have lowered water levels to historic lows, creating a massive bottleneck in global trade.",
+            "content", "Ships are currently waiting up to 20 days to transit, causing a ripple effect across retail supply chains in the United States and Europe just ahead of peak season."
+        ));
+        mock.add(Map.of(
+            "title", "Taiwan Semiconductor Hub Hit by Catastrophic Typhoon Damage",
+            "description", "A Category 5 typhoon has caused severe flooding in Hsinchu Science Park, the world's most critical chip manufacturing center.",
+            "content", "While early assessments are ongoing, the disruption to high-end AI chip production is expected to last for at least one fiscal quarter, impacting tech giants globally."
+        ));
+        return mock;
     }
 }

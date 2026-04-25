@@ -15,10 +15,26 @@ public class AnalysisController {
 
     private final AnalysisService analysisService;
     private final AnalysisRepository analysisRepository;
+    private final com.crisis.backend.service.AIService aiService;
 
-    public AnalysisController(AnalysisService analysisService, AnalysisRepository analysisRepository) {
+    public AnalysisController(AnalysisService analysisService, AnalysisRepository analysisRepository, com.crisis.backend.service.AIService aiService) {
         this.analysisService = analysisService;
         this.analysisRepository = analysisRepository;
+        this.aiService = aiService;
+    }
+
+    @org.springframework.web.bind.annotation.PostMapping("/chat")
+    public ResponseEntity<java.util.Map<String, String>> chat(@org.springframework.web.bind.annotation.RequestBody java.util.Map<String, String> request) {
+        String title = request.get("title");
+        String message = request.get("message");
+
+        java.util.Optional<Analysis> analysis = analysisRepository.findByTitle(title);
+        if (analysis.isPresent()) {
+            String context = "Impact: " + analysis.get().getImpact() + " | Risk: " + analysis.get().getRiskLevel();
+            String response = aiService.chatAboutArticle(title, context, message);
+            return ResponseEntity.ok(java.util.Map.of("response", response));
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/analyze")

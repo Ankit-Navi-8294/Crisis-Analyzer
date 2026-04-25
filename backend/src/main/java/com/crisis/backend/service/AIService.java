@@ -70,6 +70,25 @@ public class AIService {
         return callGeminiForAnalysis(title, prompt, 3);
     }
 
+    // ─── Chat about a specific article ─────────────────────────────────────────
+    public String chatAboutArticle(String title, String context, String userMessage) {
+        String prompt = 
+            "You are a senior geopolitical and economic analyst. You are discussing this news event with a user:\n\n" +
+            "Event: " + title + "\n" +
+            "Context/Analysis: " + context + "\n\n" +
+            "User's Question: " + userMessage + "\n\n" +
+            "Provide a concise (2-4 sentences), professional, and insightful answer based on the context. " +
+            "If the question is unrelated to the event or global economics, politely redirect the conversation. " +
+            "Return raw text only.";
+
+        try {
+            Map response = postToGemini(prompt, 0.7); // Higher temperature for more natural chat
+            return extractText(response);
+        } catch (Exception e) {
+            return "I apologize, but I'm having trouble processing that analysis right now. Please try again.";
+        }
+    }
+
     // ─── Shared Gemini call with retry logic ────────────────────────────────────
     private List<Map<String, Object>> callGeminiForList(String prompt, int maxRetries) {
         for (int attempt = 1; attempt <= maxRetries; attempt++) {
