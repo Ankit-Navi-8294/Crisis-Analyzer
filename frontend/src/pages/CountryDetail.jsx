@@ -248,7 +248,7 @@ const CountryDetail = () => {
               )}
               <div className="card-section">
                 <h4>Economic Impact</h4>
-                <p className="impact-text">{item.impact || item.description || '—'}</p>
+                <p className="impact-text">{item.impact || '—'}</p>
               </div>
               {item.shortTerm && (
                 <div className="card-section">

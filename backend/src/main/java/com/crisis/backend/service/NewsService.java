@@ -15,6 +15,8 @@ public class NewsService {
     @Value("${newsapi.key}")
     private String newsApiKey;
 
+    private final java.util.Random random = new java.util.Random();
+
     public NewsService(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder.baseUrl("https://newsapi.org/v2").build();
     }
@@ -29,8 +31,8 @@ public class NewsService {
                     .path("/everything")
                     .queryParam("q", query)
                     .queryParam("language", "en")
-                    .queryParam("sortBy", "relevancy") // Relevancy helps get the "crisis" aspect better than just time
-                    .queryParam("pageSize", 20)
+                    .queryParam("sortBy", random.nextBoolean() ? "relevancy" : "publishedAt") 
+                    .queryParam("pageSize", 40) // Fetch more to allow shuffling
                     .queryParam("apiKey", newsApiKey)
                     .build())
                 .retrieve()
@@ -68,6 +70,8 @@ public class NewsService {
                     );
                     newsItems.add(item);
                 }
+                // Shuffle to provide variety if the same articles are returned
+                java.util.Collections.shuffle(newsItems);
             }
             if (newsItems.isEmpty()) {
                 System.out.println("No news fetched from API, using mock crisis data for demo.");
@@ -107,6 +111,18 @@ public class NewsService {
             "description", "A major technical failure in the North Sea pipeline has forced Germany to declare a state of emergency for its industrial sector.",
             "content", "Gas prices have surged 40% across Europe. The German government is considering mandatory energy rationing to preserve strategic reserves for the winter."
         ));
+        mock.add(Map.of(
+            "title", "South China Sea Tensions Rise Following Naval Standoff",
+            "description", "Multiple coast guard vessels were involved in a heated confrontation over disputed fishing grounds, sparking international concern.",
+            "content", "Diplomatic channels are working at capacity to de-escalate the situation, but markets in Southeast Asia have already begun showing signs of regional instability."
+        ));
+        mock.add(Map.of(
+            "title", "Hyperinflation Crisis Triggers Massive Protests in South America",
+            "description", "A sudden collapse of the local currency has led to widespread civil unrest and supply shortages in major urban centers.",
+            "content", "International aid agencies are preparing emergency responses as the economic crisis threatens to spill over into neighboring countries."
+        ));
+        
+        java.util.Collections.shuffle(mock);
         return mock;
     }
 }

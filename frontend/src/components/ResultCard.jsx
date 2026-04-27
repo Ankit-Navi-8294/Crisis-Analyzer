@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 const ResultCard = ({ data, index }) => {
   const navigate = useNavigate();
-  const { title, description, riskLevel, id } = data;
+  const { title, impact, riskLevel, id } = data;
   const animationDelay = `${index * 0.12}s`;
 
   return (
@@ -24,7 +24,7 @@ const ResultCard = ({ data, index }) => {
 
       <div className="card-section">
         <p className="impact-text" style={{ color: '#94a3b8', fontSize: '0.95rem', lineHeight: '1.6' }}>
-          {description?.length > 140 ? description.substring(0, 140) + '...' : description}
+          {impact?.length > 140 ? impact.substring(0, 140) + '...' : impact}
         </p>
       </div>
 

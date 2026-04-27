@@ -6,6 +6,8 @@ import {
   RadarChart, PolarGrid, PolarAngleAxis, Radar,
 } from 'recharts';
 
+import { API_BASE_URL } from '../config';
+
 const RISK_COLORS = { High: '#ef4444', Medium: '#facc15', Low: '#10b981' };
 
 const estimateSeverity = (text = '') => {
@@ -78,7 +80,7 @@ const ArticleDetail = () => {
     setIsTyping(true);
 
     try {
-      const response = await fetch('http://localhost:8080/chat', {
+      const response = await fetch(`${API_BASE_URL}/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title: article.title, message: userMsg }),

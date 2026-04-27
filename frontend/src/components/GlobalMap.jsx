@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
-const GlobalMap = ({ data }) => {
+const GlobalMap = ({ data, search }) => {
   const navigate = useNavigate();
   const [tooltip, setTooltip] = useState({ visible: false, name: '', risk: '', x: 0, y: 0 });
 
@@ -34,6 +34,13 @@ const GlobalMap = ({ data }) => {
       c.toLowerCase().includes(name.toLowerCase())
     );
     return match ? countryMetrics[match] : null;
+  };
+
+  const isSearchMatch = (geo) => {
+    if (!search || search.trim().length < 2) return false;
+    const name = geo.properties.name.toLowerCase();
+    const s = search.toLowerCase().trim();
+    return name.includes(s) || s.includes(name);
   };
 
   const getFillColor = (geo) => {
@@ -110,9 +117,9 @@ const GlobalMap = ({ data }) => {
                 <Geography
                   key={geo.rsmKey}
                   geography={geo}
-                  fill={getFillColor(geo)}
-                  stroke="rgba(255,255,255,0.06)"
-                  strokeWidth={0.5}
+                  fill={isSearchMatch(geo) ? '#3b82f6' : getFillColor(geo)}
+                  stroke={isSearchMatch(geo) ? '#60a5fa' : "rgba(255,255,255,0.06)"}
+                  strokeWidth={isSearchMatch(geo) ? 2 : 0.5}
                   style={{
                     default: { outline: 'none' },
                     hover: {

@@ -8,6 +8,7 @@ import Loader from './components/Loader';
 import GlobalMap from './components/GlobalMap';
 import CountryDetail from './pages/CountryDetail';
 import ArticleDetail from './pages/ArticleDetail';
+import { API_BASE_URL } from './config';
 import './index.css';
 
 function Dashboard() {
@@ -26,7 +27,7 @@ function Dashboard() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('http://localhost:8080/analyze');
+      const response = await fetch(`${API_BASE_URL}/analyze?t=${Date.now()}`);
       if (!response.ok) throw new Error(`API error: ${response.status}`);
       const resultData = await response.json();
       setData(resultData);
@@ -38,18 +39,21 @@ function Dashboard() {
     }
   };
 
-  const highCount   = Array.isArray(data) ? data.filter(d => d.riskLevel === 'High').length : 0;
-  const mediumCount = Array.isArray(data) ? data.filter(d => d.riskLevel === 'Medium').length : 0;
-  const lowCount    = Array.isArray(data) ? data.filter(d => d.riskLevel === 'Low').length : 0;
-  const hasData     = Array.isArray(data) && data.length > 0;
-
   const filteredData = React.useMemo(() => {
     if (!data) return [];
+    const s = search.toLowerCase().trim();
     return data.filter(item => 
-      item.title.toLowerCase().includes(search.toLowerCase()) || 
-      item.description.toLowerCase().includes(search.toLowerCase())
+      item.title?.toLowerCase().includes(s) || 
+      item.impact?.toLowerCase().includes(s) ||
+      item.riskLevel?.toLowerCase().includes(s) ||
+      item.countriesAffected?.some(c => c.toLowerCase().includes(s))
     );
   }, [data, search]);
+
+  const highCount   = filteredData.filter(d => d.riskLevel === 'High').length;
+  const mediumCount = filteredData.filter(d => d.riskLevel === 'Medium').length;
+  const lowCount    = filteredData.filter(d => d.riskLevel === 'Low').length;
+  const hasData     = Array.isArray(data) && data.length > 0;
 
   return (
     <div className="app-container">
@@ -155,7 +159,7 @@ function Dashboard() {
                 )}
               </div>
 
-              <GlobalMap data={data} />
+              <GlobalMap data={filteredData} search={search} />
 
               <div className="results-grid">
                 {filteredData.map((item, index) => (

@@ -24,6 +24,9 @@ public class AnalysisService {
     }
 
     public List<Analysis> processGlobalRisks() {
+        // Clear old analysis results to ensure fresh data every time
+        analysisRepository.deleteAll();
+
         List<Map<String, String>> newsItems = newsService.fetchCrisisNews();
         List<Analysis> results = new ArrayList<>();
 
@@ -52,14 +55,6 @@ public class AnalysisService {
                 String title = item.get("title");
                 String description = item.get("description");
                 String content = description + " " + item.get("content");
-
-                // Optimization: Avoid duplicate analysis
-                Optional<Analysis> existingAnalysis = analysisRepository.findByTitle(title);
-                if (existingAnalysis.isPresent()) {
-                    results.add(existingAnalysis.get());
-                    count++;
-                    continue;
-                }
 
                 // Rate limiting handled in AIService
 
