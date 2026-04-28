@@ -23,7 +23,7 @@ public class NewsService {
 
     public List<Map<String, String>> fetchCrisisNews() {
         // Stricter query focusing on immediate rapid crises: war, nuclear, disaster, collapse, emergency
-        String query = "(war OR conflict OR nuclear OR missile OR explosion OR earthquake OR tsunami OR 'coup d'etat' OR 'state of emergency' OR 'economic collapse') AND (breaking OR alert OR crisis)";
+        String query = "(war OR conflict OR nuclear OR 'geopolitical tension' OR 'economic collapse' OR 'market crash' OR 'natural disaster' OR 'civil unrest' OR 'sanctions' OR 'hyperinflation') AND (crisis OR alert OR emergency OR breaking)";
         
         try {
             Map response = webClient.get()

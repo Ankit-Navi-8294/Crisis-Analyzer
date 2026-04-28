@@ -9,7 +9,9 @@ import {
 
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
-const GlobalMap = ({ data }) => {
+const GlobalMap = ({ data, onCountryClick, selectedCountry }) => {
+  const [hoveredCountry, setHoveredCountry] = React.useState(null);
+
   // Create a lookup map for faster access
   const riskMap = useMemo(() => {
     const map = {};
@@ -34,6 +36,9 @@ const GlobalMap = ({ data }) => {
   }, [data]);
 
   const getFillColor = (geoName) => {
+    const isSelected = selectedCountry?.toLowerCase() === geoName.toLowerCase();
+    if (isSelected) return "#3b82f6"; // Primary blue for selected
+
     const risk = riskMap[geoName.toLowerCase()];
     if (!risk) return "#1e293b"; // Default slate-800
     
@@ -53,10 +58,18 @@ const GlobalMap = ({ data }) => {
       padding: '1rem',
       border: '1px solid rgba(255, 255, 255, 0.1)',
       marginBottom: '2rem',
-      boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
+      boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+      position: 'relative'
     }}>
       <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: '#f8fafc' }}>Global Threat Topology</h3>
+        <div>
+          <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: '#f8fafc', margin: 0 }}>Global Threat Topology</h3>
+          {hoveredCountry && (
+            <p style={{ fontSize: '0.8rem', color: '#3b82f6', margin: '4px 0 0 0', fontWeight: 'bold' }}>
+              {hoveredCountry}
+            </p>
+          )}
+        </div>
         <div style={{ display: 'flex', gap: '1rem', fontSize: '0.75rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#ef4444' }} />
@@ -93,9 +106,12 @@ const GlobalMap = ({ data }) => {
                   fill={getFillColor(name)}
                   stroke="#0f172a"
                   strokeWidth={0.5}
+                  onMouseEnter={() => setHoveredCountry(name)}
+                  onMouseLeave={() => setHoveredCountry(null)}
+                  onClick={() => onCountryClick && onCountryClick(name)}
                   style={{
                     default: { outline: "none", transition: "all 250ms" },
-                    hover: { fill: "#384455", outline: "none", cursor: "pointer" },
+                    hover: { fill: "#475569", outline: "none", cursor: "pointer" },
                     pressed: { outline: "none" }
                   }}
                 />

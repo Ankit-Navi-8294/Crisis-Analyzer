@@ -16,6 +16,7 @@ function Dashboard() {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(null);
   const [search, setSearch] = React.useState('');
+  const [selectedCountry, setSelectedCountry] = React.useState(null);
   const contentRef = useRef(null);
 
   const handlePrint = useReactToPrint({
@@ -26,6 +27,7 @@ function Dashboard() {
   const handleAnalyze = async () => {
     setLoading(true);
     setError(null);
+    setSelectedCountry(null); // Reset filter on refresh
     try {
       const response = await fetch(`${API_BASE_URL}/analyze?t=${Date.now()}`);
       if (!response.ok) {
@@ -45,14 +47,28 @@ function Dashboard() {
 
   const filteredData = React.useMemo(() => {
     if (!data) return [];
+    let filtered = data;
+
+    // Filter by country from map
+    if (selectedCountry) {
+      filtered = filtered.filter(item => 
+        item.countriesAffected?.some(c => c.toLowerCase() === selectedCountry.toLowerCase())
+      );
+    }
+
+    // Filter by search
     const s = search.toLowerCase().trim();
-    return data.filter(item => 
-      item.title?.toLowerCase().includes(s) || 
-      item.impact?.toLowerCase().includes(s) ||
-      item.riskLevel?.toLowerCase().includes(s) ||
-      item.countriesAffected?.some(c => c.toLowerCase().includes(s))
-    );
-  }, [data, search]);
+    if (s) {
+      filtered = filtered.filter(item => 
+        item.title?.toLowerCase().includes(s) || 
+        item.impact?.toLowerCase().includes(s) ||
+        item.riskLevel?.toLowerCase().includes(s) ||
+        item.countriesAffected?.some(c => c.toLowerCase().includes(s))
+      );
+    }
+    
+    return filtered;
+  }, [data, search, selectedCountry]);
 
   const highCount   = filteredData.filter(d => d.riskLevel === 'High').length;
   const mediumCount = filteredData.filter(d => d.riskLevel === 'Medium').length;
@@ -163,7 +179,44 @@ function Dashboard() {
                 )}
               </div>
 
-              <GlobalMap data={filteredData} search={search} />
+              <GlobalMap 
+                data={data} 
+                onCountryClick={setSelectedCountry} 
+                selectedCountry={selectedCountry}
+              />
+
+              {selectedCountry && (
+                <div style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'center',
+                  padding: '0.75rem 1.25rem',
+                  background: 'rgba(59, 130, 246, 0.1)',
+                  border: '1px solid rgba(59, 130, 246, 0.2)',
+                  borderRadius: '0.75rem',
+                  marginBottom: '1.5rem',
+                  width: '100%'
+                }}>
+                  <span style={{ color: '#93c5fd', fontSize: '0.9rem' }}>
+                    Filtering by: <strong style={{ textTransform: 'uppercase' }}>{selectedCountry}</strong>
+                  </span>
+                  <button 
+                    onClick={() => setSelectedCountry(null)}
+                    style={{ 
+                      background: 'rgba(59, 130, 246, 0.2)',
+                      color: '#93c5fd',
+                      border: 'none',
+                      padding: '0.25rem 0.75rem',
+                      borderRadius: '0.5rem',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                      transition: 'background 0.2s'
+                    }}
+                  >
+                    Clear Filter
+                  </button>
+                </div>
+              )}
 
               <div className="results-grid">
                 {filteredData.map((item, index) => (
