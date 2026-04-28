@@ -11,6 +11,7 @@ const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
 const GlobalMap = ({ data, onCountryClick, selectedCountry }) => {
   const [hoveredCountry, setHoveredCountry] = React.useState(null);
+  const [tooltipPos, setTooltipPos] = React.useState({ x: 0, y: 0 });
 
   // Create a lookup map for faster access
   const riskMap = useMemo(() => {
@@ -50,8 +51,12 @@ const GlobalMap = ({ data, onCountryClick, selectedCountry }) => {
     }
   };
 
+  const handleMouseMove = (e) => {
+    setTooltipPos({ x: e.clientX, y: e.clientY });
+  };
+
   return (
-    <div className="map-container" style={{ 
+    <div className="map-container" onMouseMove={handleMouseMove} style={{ 
       width: '100%', 
       background: 'rgba(15, 23, 42, 0.6)', 
       borderRadius: '1.5rem',
@@ -59,16 +64,37 @@ const GlobalMap = ({ data, onCountryClick, selectedCountry }) => {
       border: '1px solid rgba(255, 255, 255, 0.1)',
       marginBottom: '2rem',
       boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-      position: 'relative'
+      position: 'relative',
+      overflow: 'hidden'
     }}>
+      {/* Floating Tooltip */}
+      {hoveredCountry && (
+        <div style={{
+          position: 'fixed',
+          top: tooltipPos.y + 15,
+          left: tooltipPos.x + 15,
+          background: 'rgba(15, 23, 42, 0.95)',
+          color: '#f8fafc',
+          padding: '6px 12px',
+          borderRadius: '8px',
+          fontSize: '0.85rem',
+          fontWeight: 'bold',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          pointerEvents: 'none',
+          zIndex: 9999,
+          boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.4)',
+          backdropFilter: 'blur(4px)'
+        }}>
+          {hoveredCountry}
+        </div>
+      )}
+
       <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: '#f8fafc', margin: 0 }}>Global Threat Topology</h3>
-          {hoveredCountry && (
-            <p style={{ fontSize: '0.8rem', color: '#3b82f6', margin: '4px 0 0 0', fontWeight: 'bold' }}>
-              {hoveredCountry}
-            </p>
-          )}
+          <p style={{ fontSize: '0.7rem', color: '#94a3b8', margin: '4px 0 0 0' }}>
+            Click a country to filter intelligence
+          </p>
         </div>
         <div style={{ display: 'flex', gap: '1rem', fontSize: '0.75rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
