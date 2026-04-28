@@ -49,7 +49,9 @@ public class AnalysisService {
         for (Map<String, Object> importantInfo : filteredImportantNews) {
             if (count >= 9) break;
 
-            Integer index = (Integer) importantInfo.get("index");
+            Object indexObj = importantInfo.get("index");
+            Integer index = (indexObj instanceof Number) ? ((Number) indexObj).intValue() : null;
+            
             if (index != null && index >= 0 && index < newsItems.size()) {
                 Map<String, String> item = newsItems.get(index);
                 String title = item.get("title");
