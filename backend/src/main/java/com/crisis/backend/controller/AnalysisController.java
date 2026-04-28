@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@org.springframework.web.bind.annotation.CrossOrigin(origins = "https://crisis-analyzer.vercel.app")
 @RestController
 public class AnalysisController {
 
