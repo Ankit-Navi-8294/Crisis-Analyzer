@@ -28,7 +28,10 @@ function Dashboard() {
     setError(null);
     try {
       const response = await fetch(`${API_BASE_URL}/analyze?t=${Date.now()}`);
-      if (!response.ok) throw new Error(`API error: ${response.status}`);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `API error: ${response.status}`);
+      }
       const resultData = await response.json();
       setData(resultData);
       setLastUpdated(new Date().toLocaleTimeString());

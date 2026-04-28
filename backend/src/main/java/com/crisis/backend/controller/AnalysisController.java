@@ -39,13 +39,15 @@ public class AnalysisController {
     }
 
     @GetMapping("/analyze")
-    public ResponseEntity<List<Analysis>> getAnalysis() {
+    public ResponseEntity<?> getAnalysis() {
         try {
             List<Analysis> results = analysisService.processGlobalRisks();
             return ResponseEntity.ok(results);
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.status(500).body(java.util.Map.of(
+                "error", "Backend Failure",
+                "message", e.getMessage() != null ? e.getMessage() : e.getClass().getName()
+            ));
         }
     }
 
