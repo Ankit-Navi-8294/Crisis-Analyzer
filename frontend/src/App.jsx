@@ -33,7 +33,8 @@ function Dashboard() {
       setData(resultData);
       setLastUpdated(new Date().toLocaleTimeString());
     } catch (err) {
-      setError('Failed to connect to backend. Ensure the server is running on port 8080.');
+      console.error('Fetch error:', err);
+      setError(`Connection Error: ${err.message}. Please check if the backend is running and CORS is configured.`);
     } finally {
       setLoading(false);
     }
