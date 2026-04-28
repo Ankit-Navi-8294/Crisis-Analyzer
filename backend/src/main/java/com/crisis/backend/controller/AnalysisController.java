@@ -44,10 +44,8 @@ public class AnalysisController {
             List<Analysis> results = analysisService.processGlobalRisks();
             return ResponseEntity.ok(results);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(java.util.Map.of(
-                "error", "Backend Failure",
-                "message", e.getMessage() != null ? e.getMessage() : e.getClass().getName()
-            ));
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
         }
     }
 

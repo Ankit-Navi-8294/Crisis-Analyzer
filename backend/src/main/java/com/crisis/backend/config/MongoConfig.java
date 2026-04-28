@@ -14,7 +14,6 @@ public class MongoConfig {
 
     @Bean
     public MongoClient mongoClient() {
-        System.out.println(">>> Explicitly creating MongoClient with URI: " + (mongoUri != null && mongoUri.length() > 10 ? "PRESENT" : "MISSING"));
         return MongoClients.create(mongoUri);
     }
 }
